@@ -232,7 +232,7 @@ build_debian()
 	if [ ! -f linaro-$RK_DEBIAN_VERSION-$ARCH-$TARGET.tar.gz ]; then
 		rm -rf linaro-$RK_DEBIAN_VERSION-*.tar.gz
 		RELEASE=$RK_DEBIAN_VERSION TARGET=$TARGET ARCH=$ARCH \
-			./mk-base-debian.sh
+			MIRROR=$RK_DEBIAN_MIRROR ./mk-base-debian.sh
 		ln -sf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz \
 			linaro-$RK_DEBIAN_VERSION-$ARCH-$TARGET.tar.gz
 	fi

@@ -22,9 +22,28 @@ if [ "$RK_CHIP_RISCV64" ]; then
 	# Kernel uses "riscv" arch for RISCV64.
 	export RK_KERNEL_TOOLCHAIN="$(get_toolchain kernel riscv64)"
 else
-	export RK_KERNEL_TOOLCHAIN="$(get_toolchain kernel "$RK_KERNEL_ARCH")"
+	# Try system toolchain first
+	if [ "$RK_KERNEL_ARCH" = arm64 ]; then
+			if which aarch64-linux-gnu-gcc >/dev/null 2>&1; then
+					notice "Using system toolchain for kernel: aarch64-linux-gnu-"
+					export RK_KERNEL_TOOLCHAIN="aarch64-linux-gnu-"
+			else
+					export RK_KERNEL_TOOLCHAIN="$(get_toolchain kernel "$RK_KERNEL_ARCH")"
+					[ "$RK_KERNEL_TOOLCHAIN" ] || exit 1
+			fi
+	elif [ "$RK_KERNEL_ARCH" = arm ]; then
+			if which arm-linux-gnueabihf-gcc >/dev/null 2>&1; then
+					notice "Using system toolchain for kernel: arm-linux-gnueabihf-"
+					export RK_KERNEL_TOOLCHAIN="arm-linux-gnueabihf-"
+			else
+					export RK_KERNEL_TOOLCHAIN="$(get_toolchain kernel "$RK_KERNEL_ARCH")"
+					[ "$RK_KERNEL_TOOLCHAIN" ] || exit 1
+			fi
+	else
+			export RK_KERNEL_TOOLCHAIN="$(get_toolchain kernel "$RK_KERNEL_ARCH")"
+			[ "$RK_KERNEL_TOOLCHAIN" ] || exit 1
+	fi
 fi
-[ "$RK_KERNEL_TOOLCHAIN" ] || exit 1
 
 export KMAKE="make -C "$RK_SDK_DIR/kernel/" -j$(( $(nproc) + 1 )) \
 	CROSS_COMPILE=$RK_KERNEL_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"

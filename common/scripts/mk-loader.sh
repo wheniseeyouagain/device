@@ -99,8 +99,27 @@ build_hook()
 		export RK_UBOOT_ARCH=arm
 	fi
 
-	RK_UBOOT_TOOLCHAIN="$(get_toolchain U-Boot "$RK_UBOOT_ARCH")"
-	[ "$RK_UBOOT_TOOLCHAIN" ] || exit 1
+	# Try system toolchain first
+	if [ "$RK_UBOOT_ARCH" = arm64 ]; then
+			if which aarch64-linux-gnu-gcc >/dev/null 2>&1; then
+					notice "Using system toolchain for U-Boot: aarch64-linux-gnu-"
+					RK_UBOOT_TOOLCHAIN="aarch64-linux-gnu-"
+			else
+					RK_UBOOT_TOOLCHAIN="$(get_toolchain U-Boot "$RK_UBOOT_ARCH")"
+					[ "$RK_UBOOT_TOOLCHAIN" ] || exit 1
+			fi
+	elif [ "$RK_UBOOT_ARCH" = arm ]; then
+			if which arm-linux-gnueabihf-gcc >/dev/null 2>&1; then
+					notice "Using system toolchain for U-Boot: arm-linux-gnueabihf-"
+					RK_UBOOT_TOOLCHAIN="arm-linux-gnueabihf-"
+			else
+					RK_UBOOT_TOOLCHAIN="$(get_toolchain U-Boot "$RK_UBOOT_ARCH")"
+					[ "$RK_UBOOT_TOOLCHAIN" ] || exit 1
+			fi
+	else
+			RK_UBOOT_TOOLCHAIN="$(get_toolchain U-Boot "$RK_UBOOT_ARCH")"
+			[ "$RK_UBOOT_TOOLCHAIN" ] || exit 1
+	fi
 
 	message "Toolchain for loader (U-Boot):"
 	message "${RK_UBOOT_TOOLCHAIN:-gcc}"

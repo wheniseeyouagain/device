@@ -85,6 +85,31 @@ do_build()
 				"$KERNEL_DTS_DIR/$RK_KERNEL_DTS_NAME.dtb" \
 				"$RK_KERNEL_DTB"
 
+			# Build and install device tree overlays
+			OVERLAY_DIR="kernel/arch/$RK_KERNEL_ARCH/boot/dts/rockchip/device-tree-overlays"
+			if [ -d "$OVERLAY_DIR" ]; then
+				message "Building device tree overlays..."
+				run_command make -C "$OVERLAY_DIR" overlays \
+					DTC="$RK_SDK_DIR/kernel/scripts/dtc/dtc" \
+					MKIMAGE="mkimage" 2>/dev/null || true
+
+				# Copy to output directory for later installation to rootfs
+				OVERLAY_OUT="$RK_OUTDIR/overlays"
+				run_command mkdir -p "$OVERLAY_OUT/overlays"
+
+				# Copy ubootEnv.txt (configuration file)
+				if [ -f "$OVERLAY_DIR/ubootEnv.txt" ]; then
+					run_command cp "$OVERLAY_DIR/ubootEnv.txt" "$OVERLAY_OUT/"
+				fi
+
+				# Copy all compiled .dtbo files
+				if ls "$OVERLAY_DIR/overlays/"*.dtbo 1>/dev/null 2>&1; then
+					run_command cp "$OVERLAY_DIR/overlays/"*.dtbo "$OVERLAY_OUT/overlays/"
+				fi
+
+				message "Overlays built and copied to $OVERLAY_OUT"
+			fi
+
 			# The FIT image for initrd would be packed in rootfs stage
 			if [ -n "$RK_BOOT_FIT_ITS" ] && \
 				[ -z "$RK_ROOTFS_INITRD" ]; then
