@@ -1,7 +1,6 @@
-RK_KERNEL_DTS_NAME="tspi-rk3566-user-v10-linux" # 指定 Linux 内核要编译的设备树（DTS）文件名，tspi-rk3566-user-v10-linux 是适配你这款 AYU 硬件的设备树文件，内核通过它识别硬件（如外设、引脚、中断等）。
-RK_PARAMETER="parameter-buildroot-fit.txt" # 指定参数配置文件路径，这个文件包含了系统分区表、启动介质（EMMC/NAND）、内核加载地址等核心启动参数，是瑞芯微平台启动的关键配置。
-RK_UBOOT_SPL=y # 启用 U-Boot SPL（Secondary Program Loader）编译，SPL 是 U-Boot 的前置引导程序，负责初始化硬件（如 DDR）并加载主 U-Boot，瑞芯微平台通常必须启用。       
-RK_USE_FIT_IMG=y  #   启用 FIT（Flattened Image Tree）镜像格式，FIT 是一种更安全、灵活的镜像打包方式，将内核、设备树、ramdisk 等打包成一个加密 / 校验的镜像，替代传统的 zImage + dtb 分离方式。      
-RK_TARGET_BOARD="taishanpi"        # 指定目标开发板名称为 AYU，SDK 会根据这个名称加载对应板级的编译配置、补丁、脚本等。
-RK_ROOTFS_HOSTNAME_CUSTOM=y  # 启用根文件系统主机名自定义功能，允许覆盖默认主机名。
-RK_ROOTFS_HOSTNAME="taishanpi" # 设置根文件系统的主机名（系统启动后执行 hostname 命令看到的名称）为 AYU，替代 SDK 默认的主机名。
+RK_ROOTFS_HOSTNAME_CUSTOM=y
+RK_ROOTFS_HOSTNAME="taishanpi"
+RK_UBOOT_SPL=y
+RK_KERNEL_DTS_NAME="tspi-rk3566-user-v10-linux"
+RK_PARAMETER="parameter-buildroot-fit.txt"
+RK_BUILD_JOBS="88"
