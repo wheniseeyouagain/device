@@ -123,6 +123,7 @@ endif # !builtin
 
 config RK_EXTRA_PARTITION_1_SRC
 	string "source dirs"
+	default "empty" if RK_EXTRA_PARTITION_1_NAME = "userdata"
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "testdata"
 	help
@@ -236,6 +237,7 @@ endif # !builtin
 
 config RK_EXTRA_PARTITION_2_SRC
 	string "source dirs"
+	default "empty" if RK_EXTRA_PARTITION_2_NAME = "userdata"
 	default "empty" if RK_CHIP_FAMILY = "rk3308"
 	default "testdata"
 	help
